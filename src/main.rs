@@ -22,10 +22,9 @@ trait Component<'a> {
         });
     }
 }
-struct Clock {
-    inner: Arc<TXType>,
-}
-
+struct Clock(Arc<TXType>);
+struct VolumeLevel(Arc<TXType>);
+struct Weather(Arc<TXType>);
 impl<'a> Component<'a> for Clock {
     fn update() -> String {
         let local: DateTime<Local> = Local::now();
@@ -41,7 +40,7 @@ impl<'a> Component<'a> for Clock {
     }
 
     fn get_tx(&'a self) -> &'a Arc<TXType> {
-        &self.inner
+        &self.0
     }
 
     fn get_from() -> From {
@@ -49,9 +48,6 @@ impl<'a> Component<'a> for Clock {
     }
 }
 
-struct VolumeLevel {
-    inner: Arc<TXType>,
-}
 impl<'a> Component<'a> for VolumeLevel {
     fn update() -> String {
         let default_sink = get_default_sink();
@@ -69,7 +65,6 @@ impl<'a> Component<'a> for VolumeLevel {
         );
 
         f
-        // *self.inner.lock() = f;
     }
 
     fn get_delta(&self) -> u64 {
@@ -81,15 +76,13 @@ impl<'a> Component<'a> for VolumeLevel {
     }
 
     fn get_tx(&'a self) -> &'a Arc<TXType> {
-        &self.inner
+        &self.0
     }
     fn get_from() -> From {
         From::Audio
     }
 }
-struct Weather {
-    inner: Arc<TXType>,
-}
+
 impl<'a> Component<'a> for Weather {
     fn update() -> String {
         // bash::exec(r#"curl -s "wttr.in/?format=1" | grep -o ".[0-9].*""#.to_string());
@@ -108,7 +101,7 @@ impl<'a> Component<'a> for Weather {
     }
 
     fn get_tx(&'a self) -> &'a Arc<TXType> {
-        &self.inner
+        &self.0
     }
 
     fn get_from() -> From {
@@ -127,25 +120,14 @@ type TXType = Sender<(From, String)>;
 fn main() {
     let display = unsafe { x11::xlib::XOpenDisplay(0 as *const i8) };
     let root = unsafe { x11::xlib::XRootWindow(display, 0) };
-    let mut title;
     let (tx, rx) = std::sync::mpsc::channel::<(From, String)>();
 
-    Clock {
-        inner: Arc::new(tx.clone()),
-    }
-    .run();
-    VolumeLevel {
-        inner: Arc::new(tx.clone()),
-    }
-    .run();
-    Weather {
-        inner: Arc::new(tx.clone()),
-    }
-    .run();
+    Clock(Arc::new(tx.clone())).run();
+    VolumeLevel(Arc::new(tx.clone())).run();
+    Weather(Arc::new(tx.clone())).run();
 
-    let mut clock = String::new();
-    let mut audio = String::new();
-    let mut weather = String::new();
+    let (mut clock, mut audio, mut weather, mut title) =
+        (String::new(), String::new(), String::new(), String::new());
 
     for r in rx.iter() {
         match r.0 {

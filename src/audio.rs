@@ -10,13 +10,12 @@ macro_rules! headphones {
     };
 }
 pub fn get_default_sink() -> String {
-
     let stdout = Command::new("/usr/bin/pactl")
         .arg("get-default-sink")
         .output()
         .unwrap()
         .stdout;
-        String::from_utf8(stdout).unwrap()
+    String::from_utf8(stdout).unwrap()
 }
 #[inline]
 fn get_sink_volume(s: &str) -> String {
@@ -27,13 +26,11 @@ fn get_sink_volume(s: &str) -> String {
         .output()
         .unwrap()
         .stdout;
-        String::from_utf8(stdout).unwrap()
-
+    String::from_utf8(stdout).unwrap()
 }
 pub fn get_speakers_volume() -> String {
     get_sink_volume(speakers!())
 }
-pub fn get_headphones_volume() -> String{
+pub fn get_headphones_volume() -> String {
     get_sink_volume(headphones!())
-
 }
