@@ -126,9 +126,8 @@ fn main() {
     VolumeLevel(Arc::new(tx.clone())).run();
     Weather(Arc::new(tx.clone())).run();
 
-    let (mut clock, mut audio, mut weather, mut title) =
-        (String::new(), String::new(), String::new(), String::new());
-
+    let (mut clock, mut audio, mut weather) = (String::new(), String::new(), String::new());
+    let mut title;
     for r in rx.iter() {
         match r.0 {
             From::Audio => audio = r.1,
@@ -137,9 +136,9 @@ fn main() {
         }
         title = format!("{} {} {}", audio, clock, weather);
         title.push('\0');
-        unsafe { x11::xlib::XStoreName(display, root, title.as_ptr() as *const i8) };
         unsafe {
+            x11::xlib::XStoreName(display, root, title.as_ptr() as *const i8);
             x11::xlib::XFlush(display);
-        }
+        };
     }
 }
