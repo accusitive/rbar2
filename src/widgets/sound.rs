@@ -3,10 +3,10 @@ use crate::{utils::audio, TXType, Widget, WidgetType};
 pub struct VolumeLevel(pub TXType);
 
 impl<'a> Widget<'a> for VolumeLevel {
-    type State = ();
+    type WState = ();
 
-    fn update(_: &mut Self::State) -> String {
-        let default_sink = audio::get_default_sink();
+    fn update(_: &mut Self::WState) -> Option<String> {
+        let default_sink = audio::get_default_sink()?;
         let (h, s) = match default_sink.trim() {
             speakers!() => (" 🎧 ", "[🔊]"),
             headphones!() => ("[🎧]", " 🔊 "),
@@ -15,12 +15,12 @@ impl<'a> Widget<'a> for VolumeLevel {
         let f = format!(
             "{} {} {} {}",
             h,
-            audio::get_headphones_volume(),
+            audio::get_headphones_volume()?,
             s,
-            audio::get_speakers_volume()
+            audio::get_speakers_volume()?
         );
 
-        f
+        Some(f)
     }
 
     fn get_delta() -> u64 {

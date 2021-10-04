@@ -1,12 +1,10 @@
 use std::process::Command;
 
-pub fn exec(cmd: &str) -> String {
+pub fn exec(cmd: &str) -> Option<String> {
     let stdout = Command::new("/bin/bash")
         .arg("-c")
         .arg(cmd)
-        .output()
-        .unwrap()
+        .output().ok()?
         .stdout;
-    let s = std::str::from_utf8(&stdout).unwrap();
-    s.to_string()
+    Some(std::str::from_utf8(&stdout).ok()?.to_string())
 }

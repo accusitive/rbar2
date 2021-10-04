@@ -2,14 +2,14 @@ use crate::{utils::bash, TXType, Widget, WidgetType};
 
 pub struct Weather(pub TXType);
 impl<'a> Widget<'a> for Weather {
-    type State = ();
+    type WState = ();
 
-    fn update(_: &mut Self::State) -> String {
+    fn update(_: &mut Self::WState) -> Option<String> {
         // bash::exec(r#"curl -s "wttr.in/?format=1" | grep -o ".[0-9].*""#.to_string());
-        let weather = bash::exec(r#"curl -s "wttr.in/?format=1""#);
+        let weather = bash::exec(r#"curl -s "wttr.in/?format=1""#)?;
         let weather = weather.trim();
 
-        format!("{}", weather)
+        Some(format!("{}", weather))
     }
 
     fn get_delta() -> u64 {

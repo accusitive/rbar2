@@ -5,10 +5,10 @@ use crate::{TXType, Widget, WidgetType};
 pub struct Clock(pub TXType);
 
 impl<'a> Widget<'a> for Clock {
-    type State = ();
-    fn update(_: &mut Self::State) -> String {
+    type WState = ();
+    fn update(_: &mut Self::WState) -> Option<String> {
         let local: DateTime<Local> = Local::now();
-        local.format("📅 %a %b %e %I:%M:%S %P %Y").to_string()
+        Some(local.format("📅 %a %b %e %I:%M:%S %P %Y").to_string())
     }
 
     fn get_delta() -> u64 {

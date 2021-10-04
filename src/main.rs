@@ -4,11 +4,11 @@ mod utils;
 mod widgets;
 
 trait Widget<'a> {
-    type State: Sync + Default;
+    type WState: Sync + Default;
     fn get_delta() -> u64;
     fn get_name() -> String;
     fn get_tx(&'a self) -> TXType;
-    fn update(s: &mut Self::State) -> String;
+    fn update(s: &mut Self::WState) -> Option<String>;
     fn get_widget_type() -> WidgetType;
     fn sly(&'a self) {}
 
@@ -19,7 +19,7 @@ trait Widget<'a> {
         let t = self.get_tx();
         let duration = std::time::Duration::from_millis(Self::get_delta());
         std::thread::spawn(move || {
-            let mut d = Self::State::default();
+            let mut d = Self::WState::default();
             loop {
                 t.send((Self::get_widget_type(), Self::update(&mut d)))
                     .unwrap();
@@ -39,7 +39,7 @@ pub enum WidgetType {
     CpuTemp,
 }
 unsafe impl Send for WidgetType {}
-type TXType = Arc<SyncSender<(WidgetType, String)>>;
+type TXType = Arc<SyncSender<(WidgetType, Option<String>)>>;
 
 fn main() {
     let display = unsafe { x11::xlib::XOpenDisplay(0 as *const i8) };
@@ -55,16 +55,20 @@ fn main() {
     // let (mut clock, mut audio, mut weather) = (String::new(), String::new(), String::new());
     let mut title;
     for r in rx.iter() {
-        match r.0 {
-            WidgetType::Audio => audio = r.1,
-            WidgetType::Clock => clock = r.1,
-            WidgetType::Weather => weather = r.1,
-            WidgetType::Load => load = r.1,
-            WidgetType::CpuTemp => temp = r.1,
-            // _ => todo!(),
+        match r.1 {
+            Some(s) => {
+                match r.0 {
+                    WidgetType::Audio => audio = s,
+                    WidgetType::Clock => clock = s,
+                    WidgetType::Weather => weather = s,
+                    WidgetType::Load => load = s,
+                    WidgetType::CpuTemp => temp = s,
+                }
+            },
+            None => println!("One of the widgets returned an error. {:?}", r.0)
         }
+        
         title = format!("{} {} {} {} {}", temp, load, audio, clock, weather);
-        // title = format!("{}", clock);
 
         title.push('\0');
         unsafe {
