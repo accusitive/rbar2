@@ -1,33 +1,20 @@
-use crate::{utils::bash, TXType, Widget, WidgetType};
+use crate::{TXType, Widget, WidgetType};
 
 pub struct CpuTemp(pub TXType);
-pub struct CpuTempData {
-    a: i32,
-}
-impl Default for CpuTempData {
-    fn default() -> Self {
-        Self { a: Default::default() }
-    }
-}
 impl<'a> Widget<'a> for CpuTemp {
-    type State = CpuTempData;
+    type State = ();
 
     fn update(_: &mut Self::State) -> String {
-        // s.push('⏱');
-        let sens = bash::exec("sensors");
-        let plus_index = sens.find('+');
-
-        // println!("{}", s2);
-        // s
-        // s2.to_string()
-        String::new()
+        let mut s = std::fs::read_to_string("/sys/class/hwmon/hwmon0/temp1_input").unwrap();
+        s.insert(s.len() - 4, '.');
+        format!("{}°C", s)
     }
 
-    fn get_delta(&self) -> u64 {
+    fn get_delta() -> u64 {
         1000
     }
 
-    fn get_name(&self) -> String {
+    fn get_name() -> String {
         "VolumeLevel".to_string()
     }
 

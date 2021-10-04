@@ -1,6 +1,6 @@
-use std::sync::{
-    mpsc::{Sender, SyncSender},
-    Arc,
+use std::{
+    sync::{mpsc::SyncSender, Arc},
+    time::Instant,
 };
 #[macro_use]
 mod utils;
@@ -8,24 +8,19 @@ mod widgets;
 
 trait Widget<'a> {
     type State: Sync + Default;
-    fn get_delta(&self) -> u64;
-    fn get_name(&self) -> String;
+    fn get_delta() -> u64;
+    fn get_name() -> String;
     fn get_tx(&'a self) -> TXType;
     fn update(s: &mut Self::State) -> String;
-    // fn updates(data: Self::State) -> String {
-    //     String::new()
-    // }
-    fn get_d(&self) -> Option<Self::State> {
-        None
-    }
     fn get_widget_type() -> WidgetType;
     fn sly(&'a self) {}
+
     fn run<'r>(self: &'a Self) -> String
     where
         Self: Sync,
     {
         let t = self.get_tx();
-        let duration = std::time::Duration::from_millis(self.get_delta());
+        let duration = std::time::Duration::from_millis(Self::get_delta());
         std::thread::spawn(move || {
             let mut d = Self::State::default();
             loop {
@@ -52,7 +47,7 @@ type TXType = Arc<SyncSender<(WidgetType, String)>>;
 fn main() {
     let display = unsafe { x11::xlib::XOpenDisplay(0 as *const i8) };
     let root = unsafe { x11::xlib::XRootWindow(display, 0) };
-    let (tx, rx) = std::sync::mpsc::sync_channel(128);
+    let (tx, rx) = std::sync::mpsc::sync_channel(1024);
     let a = Arc::new(tx.clone());
     let mut clock = widgets::Clock(a).run();
     let mut audio = widgets::VolumeLevel(Arc::new(tx.clone())).run();

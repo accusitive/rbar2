@@ -15,11 +15,11 @@ impl<'a> Widget<'a> for LoadAvg {
         s
     }
 
-    fn get_delta(&self) -> u64 {
+    fn get_delta() -> u64 {
         1000
     }
 
-    fn get_name(&self) -> String {
+    fn get_name() -> String {
         "LoadAvg".to_string()
     }
 

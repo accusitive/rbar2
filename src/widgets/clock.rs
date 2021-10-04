@@ -11,11 +11,11 @@ impl<'a> Widget<'a> for Clock {
         local.format("📅 %a %b %e %I:%M:%S %P %Y").to_string()
     }
 
-    fn get_delta(&self) -> u64 {
+    fn get_delta() -> u64 {
         1000
     }
 
-    fn get_name(&self) -> String {
+    fn get_name() -> String {
         "Clock".to_string()
     }
 

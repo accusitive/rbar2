@@ -23,11 +23,11 @@ impl<'a> Widget<'a> for VolumeLevel {
         f
     }
 
-    fn get_delta(&self) -> u64 {
+    fn get_delta() -> u64 {
         500
     }
 
-    fn get_name(&self) -> String {
+    fn get_name() -> String {
         "VolumeLevel".to_string()
     }
 

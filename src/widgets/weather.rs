@@ -12,11 +12,11 @@ impl<'a> Widget<'a> for Weather {
         format!("{}", weather)
     }
 
-    fn get_delta(&self) -> u64 {
+    fn get_delta() -> u64 {
         10 * 10000
     }
 
-    fn get_name(&self) -> String {
+    fn get_name() -> String {
         "Weather".to_string()
     }
 
