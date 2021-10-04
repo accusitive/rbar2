@@ -3,7 +3,9 @@ use crate::{TXType, Widget, WidgetType};
 pub struct LoadAvg(pub TXType);
 
 impl<'a> Widget<'a> for LoadAvg {
-    fn update() -> String {
+    type State = ();
+
+    fn update(_: &mut Self::State) -> String {
         let load = std::fs::read_to_string("/proc/loadavg").unwrap();
         let mut s = String::with_capacity(32);
         s.push('⏱');
@@ -18,11 +20,11 @@ impl<'a> Widget<'a> for LoadAvg {
     }
 
     fn get_name(&self) -> String {
-        "VolumeLevel".to_string()
+        "LoadAvg".to_string()
     }
 
-    fn get_tx(&'a self) -> &'a TXType {
-        &self.0
+    fn get_tx(&'a self) -> TXType {
+        self.0.clone()
     }
     fn get_widget_type() -> WidgetType {
         WidgetType::Load

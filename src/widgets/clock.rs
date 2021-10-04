@@ -1,11 +1,12 @@
 use chrono::{DateTime, Local};
 
-use crate::{Widget, WidgetType, TXType};
+use crate::{TXType, Widget, WidgetType};
 
 pub struct Clock(pub TXType);
 
 impl<'a> Widget<'a> for Clock {
-    fn update() -> String {
+    type State = ();
+    fn update(_: &mut Self::State) -> String {
         let local: DateTime<Local> = Local::now();
         local.format("📅 %a %b %e %I:%M:%S %P %Y").to_string()
     }
@@ -18,8 +19,8 @@ impl<'a> Widget<'a> for Clock {
         "Clock".to_string()
     }
 
-    fn get_tx(&'a self) -> &'a TXType {
-        &self.0
+    fn get_tx(&'a self) -> TXType {
+        self.0.clone()
     }
 
     fn get_widget_type() -> WidgetType {

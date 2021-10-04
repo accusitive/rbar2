@@ -1,10 +1,11 @@
-use crate::{Widget, TXType, utils::audio, WidgetType};
+use crate::{utils::audio, TXType, Widget, WidgetType};
 
 pub struct VolumeLevel(pub TXType);
 
-
 impl<'a> Widget<'a> for VolumeLevel {
-    fn update() -> String {
+    type State = ();
+
+    fn update(_: &mut Self::State) -> String {
         let default_sink = audio::get_default_sink();
         let (h, s) = match default_sink.trim() {
             speakers!() => (" 🎧 ", "[🔊]"),
@@ -30,8 +31,8 @@ impl<'a> Widget<'a> for VolumeLevel {
         "VolumeLevel".to_string()
     }
 
-    fn get_tx(&'a self) -> &'a TXType {
-        &self.0
+    fn get_tx(&'a self) -> TXType {
+        self.0.clone()
     }
     fn get_widget_type() -> WidgetType {
         WidgetType::Audio

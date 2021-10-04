@@ -1,6 +1,6 @@
 use std::process::Command;
 
-pub fn exec(cmd: String) -> String {
+pub fn exec(cmd: &str) -> String {
     let stdout = Command::new("/bin/bash")
         .arg("-c")
         .arg(cmd)
