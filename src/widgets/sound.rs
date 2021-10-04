@@ -7,8 +7,8 @@ impl<'a> Widget<'a> for VolumeLevel {
     fn update() -> String {
         let default_sink = audio::get_default_sink();
         let (h, s) = match default_sink.trim() {
-            speakers!() => (" 🎧 ", "[ 🔊 ]"),
-            headphones!() => ("[ 🎧 ]", " 🔊 "),
+            speakers!() => (" 🎧 ", "[🔊]"),
+            headphones!() => ("[🎧]", " 🔊 "),
             _ => ("🎧", "🔊"),
         };
         let f = format!(
@@ -23,7 +23,7 @@ impl<'a> Widget<'a> for VolumeLevel {
     }
 
     fn get_delta(&self) -> u64 {
-        2000
+        500
     }
 
     fn get_name(&self) -> String {
