@@ -52,22 +52,20 @@ fn main() {
     let mut load = widgets::LoadAvg(Arc::new(tx.clone())).run();
     let mut temp = widgets::CpuTemp(Arc::new(tx.clone())).run();
 
-    // let (mut clock, mut audio, mut weather) = (String::new(), String::new(), String::new());
     let mut title;
     for r in rx.iter() {
-        match r.1 {
-            Some(s) => {
-                match r.0 {
-                    WidgetType::Audio => audio = s,
-                    WidgetType::Clock => clock = s,
-                    WidgetType::Weather => weather = s,
-                    WidgetType::Load => load = s,
-                    WidgetType::CpuTemp => temp = s,
-                }
-            },
-            None => println!("One of the widgets returned an error. {:?}", r.0)
+        if let Some(s) = r.1 {
+            match r.0 {
+                WidgetType::Audio => audio = s,
+                WidgetType::Clock => clock = s,
+                WidgetType::Weather => weather = s,
+                WidgetType::Load => load = s,
+                WidgetType::CpuTemp => temp = s,
+            }
+        } else {
+            println!("One of the widgets returned an error. {:?}", r.0)
         }
-        
+
         title = format!("{} {} {} {} {}", temp, load, audio, clock, weather);
 
         title.push('\0');

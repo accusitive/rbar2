@@ -12,7 +12,8 @@ macro_rules! headphones {
 pub fn get_default_sink() -> Option<String> {
     let stdout = Command::new("/usr/bin/pactl")
         .arg("get-default-sink")
-        .output().ok()?
+        .output()
+        .ok()?
         .stdout;
     String::from_utf8(stdout).ok()
 }
@@ -22,7 +23,8 @@ fn get_sink_volume(s: &str) -> Option<String> {
         .arg("--get-volume")
         .arg("--sink")
         .arg(format!("{}", s))
-        .output().ok()?
+        .output()
+        .ok()?
         .stdout;
     String::from_utf8(stdout).ok()
 }
