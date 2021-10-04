@@ -1,14 +1,17 @@
 use chrono::prelude::*;
-use std::sync::{mpsc::Sender, Arc};
+use std::{
+    sync::{mpsc::Sender, Arc},
+};
 #[macro_use]
 mod audio;
 mod bash;
 
 use crate::audio::{get_default_sink, get_headphones_volume, get_speakers_volume};
+
 trait Component<'a> {
     fn get_delta(&self) -> u64;
     fn get_name(&self) -> String;
-    fn get_tx(&'a self) -> &'a Arc<TXType>;
+    fn get_tx(&'a self) -> &'a TXType;
     fn update() -> String;
     fn get_from() -> From;
     fn run(&'a self) {
@@ -22,9 +25,9 @@ trait Component<'a> {
         });
     }
 }
-struct Clock(Arc<TXType>);
-struct VolumeLevel(Arc<TXType>);
-struct Weather(Arc<TXType>);
+struct Clock(TXType);
+struct VolumeLevel(TXType);
+struct Weather(TXType);
 impl<'a> Component<'a> for Clock {
     fn update() -> String {
         let local: DateTime<Local> = Local::now();
@@ -39,7 +42,7 @@ impl<'a> Component<'a> for Clock {
         "Clock".to_string()
     }
 
-    fn get_tx(&'a self) -> &'a Arc<TXType> {
+    fn get_tx(&'a self) -> &'a TXType {
         &self.0
     }
 
@@ -75,7 +78,7 @@ impl<'a> Component<'a> for VolumeLevel {
         "VolumeLevel".to_string()
     }
 
-    fn get_tx(&'a self) -> &'a Arc<TXType> {
+    fn get_tx(&'a self) -> &'a TXType {
         &self.0
     }
     fn get_from() -> From {
@@ -100,7 +103,7 @@ impl<'a> Component<'a> for Weather {
         "Weather".to_string()
     }
 
-    fn get_tx(&'a self) -> &'a Arc<TXType> {
+    fn get_tx(&'a self) -> &'a TXType {
         &self.0
     }
 
@@ -115,7 +118,7 @@ enum From {
     Clock,
     Weather,
 }
-type TXType = Sender<(From, String)>;
+type TXType = Arc<Sender<(From, String)>>;
 
 fn main() {
     let display = unsafe { x11::xlib::XOpenDisplay(0 as *const i8) };
