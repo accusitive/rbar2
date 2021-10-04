@@ -1,7 +1,4 @@
-use std::{
-    sync::{mpsc::SyncSender, Arc},
-    time::Instant,
-};
+use std::sync::{mpsc::SyncSender, Arc};
 #[macro_use]
 mod utils;
 mod widgets;
