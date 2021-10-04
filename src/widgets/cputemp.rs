@@ -7,7 +7,7 @@ impl<'a> Widget<'a> for CpuTemp {
     fn update(_: &mut Self::WState) -> Option<String> {
         let mut s = std::fs::read_to_string("/sys/class/hwmon/hwmon0/temp1_input").ok()?;
         s.insert(s.len() - 4, '.');
-        Some(format!("{}°C", s))
+        Some(format!("💻 {}°C", s))
     }
 
     fn get_delta() -> u64 {

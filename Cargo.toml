@@ -9,5 +9,5 @@ license = "MIT"
 [dependencies]
 x11 = { version = "2.18.2", features = ["xlib"] }
 chrono = "0.4.19"
-parking_lot = "0.11.2"
-sysinfo = "0.20.4"
+ureq = "2.2.0"
+dotenv = "0.15.0"
